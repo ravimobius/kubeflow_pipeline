@@ -1,47 +1,25 @@
-name: DataLoader
+name: Data Loader Component
 description: Load and split data from files or URLs
-version: 1.0.0
-type: execution_node
+
 inputs:
-  - label: Data Path
-    name: data_path
-    type: string
-    required: false
-    description: Path to input data file
-  - label: Data URL  
-    name: data_url
-    type: string
-    required: false
-    description: URL to input data file
-  - label: Validation Size
-    name: val_size
-    type: number
-    default: 0.2
-    description: Validation set size (between 0 and 1)
-  - label: Output Format
-    name: output_format
-    type: string
-    enum: [csv, json, parquet]
-    default: csv
-    description: Format for output files
+  - {name: data_path, type: String, default: '', description: 'Path to input data file'}
+  - {name: data_url, type: String, default: '', description: 'URL to input data file'}
+  - {name: val_size, type: Float, default: 0.2, description: 'Validation set size'}
+  - {name: output_format, type: String, default: 'csv', description: 'Output format (csv/json/parquet)'}
+
 outputs:
-  - label: Training Data
-    name: train_data
-    type: string
-    description: Path to training dataset
-  - label: Validation Data  
-    name: val_data
-    type: string
-    description: Path to validation dataset
-  - label: Metadata
-    name: metadata
-    type: string
-    description: Path to metadata JSON file
-command: python dataloader.py
-dependencies:
-  - pandas
-  - numpy 
-  - scikit-learn
-  - requests
-  - pyarrow
-image: ravidocker189/data_loader_1:latest
+  - {name: train_data, type: String}
+  - {name: val_data, type: String}
+  - {name: metadata, type: String}
+
+implementation:
+  container:
+    image: ravidocker189/data_loader_1:latest
+    command: [python]
+    args: [
+      'src/dl_f.py',
+      --data-path, {inputValue: data_path},
+      --data-url, {inputValue: data_url},
+      --val-size, {inputValue: val_size},
+      --output-format, {inputValue: output_format}
+    ]
