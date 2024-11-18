@@ -1,26 +1,36 @@
-name: Data Processing Component
-description: A component for loading, processing, and splitting datasets from local files or URLs.
-
+name: data-loader
+description: Data loader component for preprocessing and splitting datasets
+version: 1.0.0
 inputs:
-  - {name: data_source, type: String, description: 'Path to the input data file or URL'}
-  - {name: val_size, type: Float, default: 0.2, description: 'Proportion of data to use as validation set'}
-  - {name: output_format, type: String, default: 'csv', description: 'Format of output data: csv, json, or parquet'}
-  - {name: is_url, type: Boolean, default: false, description: 'Whether the input data source is a URL'}
+  - name: data_path
+    type: String
+    description: Path to input data file
+    optional: true
+  - name: data_url
+    type: String 
+    description: URL to input data file
+    optional: true
+  - name: val_size
+    type: Float
+    description: Validation set size ratio
+    default: 0.2
+  - name: output_format
+    type: String
+    description: Output format (csv/json/parquet)
+    default: csv
 
 outputs:
-  - {name: train_output, type: String, description: 'Path to save the training dataset'}
-  - {name: validation_output, type: String, description: 'Path to save the validation dataset'}
-  - {name: metadata_output, type: String, description: 'Path to save the metadata file'}
+  - name: train_data
+    type: Dataset
+    description: Training dataset
+  - name: val_data  
+    type: Dataset
+    description: Validation dataset
+  - name: metadata
+    type: JSON
+    description: Processing metadata
 
 implementation:
   container:
     image: ravidocker189/data_loader:latest
-    command: [python]
-    args: [
-      'src/dl_f.py',
-      --data-url, {inputValue: data_source},
-      --val-size, {inputValue: val_size},
-      --output-format, {inputValue: output_format},
-      --_output_paths, {outputPath: train_output}, {outputPath: validation_output}, {outputPath: metadata_output},
-      --is-url, {inputValue: is_url}
-    ]
+    command: [python, dl_f.py]
