@@ -18,7 +18,7 @@ outputs:
 implementation:
   container:
     image: ravidocker189/data_loader:latest
-    command: [python, -u, src/dl_f.py]
+    command: [python, -u, ./src/dl_f.py]
     args: [
       --data-path, {inputValue: data-path},
       --data-url, {inputValue: data-url},
