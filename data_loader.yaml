@@ -1,21 +1,25 @@
-name: DBSCAN Clustering Component
-description: Perform DBSCAN clustering with automatic parameter tuning and cluster analysis
+name: Data Loader Component
+description: Load and split data from files or URLs into training and validation sets
 
 inputs:
-  - {name: input_data,     type: String,  default: '',              description: 'Path to input data file (.csv or .parquet)'}
-  - {name: output_dir,     type: String,  default: './model_output',optional: true, description: 'Directory to save the model and analysis results'}
+  - {name: data_path, type: String, default: '', description: 'Path to input data file (.csv, .json, .parquet)'}
+  - {name: output_dir, type: String, default: './output', optional: true, description: 'Directory to save the processed data'}
+  - {name: val_size, type: Float, default: 0.2, description: 'Validation set size (0 to 1)'}
+  - {name: output_format, type: String, default: 'csv', description: 'Output format (csv/json/parquet)'}
 
 outputs:
-  - {name: cluster_analysis,  type: String}
-  - {name: model_path,        type: String}
-  - {name: best_parameters,   type: String}
+  - {name: train_data, type: String}
+  - {name: val_data, type: String}
+  - {name: metadata, type: String}
 
 implementation:
   container:
-    image: nikhilv215/dbscantest1:latest
+    image: ravidocker189/data_loader: latest
     command: [python]
     args: [
-      './src/dbscan_trainer.py',
-      --input-data,  {inputValue: input_data},
-      --output-dir,  {inputValue: output_dir}
+      './dataloader.py',
+      --data-path, {inputValue: data_path},
+      --output-dir, {inputValue: output_dir},
+      --val-size, {inputValue: val_size},
+      --output-format, {inputValue: output_format}
     ]
