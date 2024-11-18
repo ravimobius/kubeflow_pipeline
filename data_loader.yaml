@@ -3,7 +3,7 @@ description: Load and split data from files or URLs into training and validation
 
 inputs:
   - {name: data_path, type: String, default: '', description: 'Path to input data file (.csv, .json, .parquet)'}
-  - {name: output_dir, type: String, default: './output', optional: true, description: 'Directory to save the processed data'}
+  - {name: output_dir, type: String, default: './output', description: 'Directory to save the processed data'}
   - {name: val_size, type: Float, default: 0.2, description: 'Validation set size (0 to 1)'}
   - {name: output_format, type: String, default: 'csv', description: 'Output format (csv/json/parquet)'}
 
@@ -14,10 +14,10 @@ outputs:
 
 implementation:
   container:
-    image: ravimobius189/data_loader_test:1.0
-    command: [python]
+    image: ravimobius189/data_loader_test:latest
+    command: [python3]
     args: [
-      'src/dl_f.py',
+      'dl_f.py',
       --data-path, {inputValue: data_path},
       --output-dir, {inputValue: output_dir},
       --val-size, {inputValue: val_size},
