@@ -1,25 +1,26 @@
-name: DataLoader
-description: Load and split data into train and validation sets from file or URL
+name: Data Processing Component
+description: A component for loading, processing, and splitting datasets from local files or URLs.
+
 inputs:
-- {name: data_path, type: String, optional: true, description: 'Path to input file'}
-- {name: data_url, type: String, optional: true, description: 'URL to input data'}
-- {name: val_size, type: Float, default: 0.2, description: 'Validation set size (between 0 and 1)'}
-- {name: output_format, type: String, default: 'csv', description: 'Output format (csv/json/parquet)'}
+  - {name: data_source, type: String, description: 'Path to the input data file or URL'}
+  - {name: val_size, type: Float, default: 0.2, description: 'Proportion of data to use as validation set'}
+  - {name: output_format, type: String, default: 'csv', description: 'Format of output data: csv, json, or parquet'}
+  - {name: is_url, type: Boolean, default: false, description: 'Whether the input data source is a URL'}
+
 outputs:
-- {name: train_data, type: String, description: 'Path to train data file'}
-- {name: val_data, type: String, description: 'Path to validation data file'} 
-- {name: metadata, type: String, description: 'Path to metadata file'}
+  - {name: train_output, type: String, description: 'Path to save the training dataset'}
+  - {name: validation_output, type: String, description: 'Path to save the validation dataset'}
+  - {name: metadata_output, type: String, description: 'Path to save the metadata file'}
+
 implementation:
   container:
-    image: ravimobius189/data_loader_test:1.0
+    image: ravidocker189/data_loader:latest
     command: [python]
     args: [
-      '/src/dl_f.py',
-      {ifPresent: {inputValue: data_path}, then: ['--data-path', {inputValue: data_path}]},
-      {ifPresent: {inputValue: data_url}, then: ['--data-url', {inputValue: data_url}]},
+      'src/dl_f.py',
+      --data-url, {inputValue: data_source},
       --val-size, {inputValue: val_size},
       --output-format, {inputValue: output_format},
-      --_output_paths, {outputPath: train_data},
-      {outputPath: val_data},
-      {outputPath: metadata}
+      --_output_paths, {outputPath: train_output}, {outputPath: validation_output}, {outputPath: metadata_output},
+      --is-url, {inputValue: is_url}
     ]
