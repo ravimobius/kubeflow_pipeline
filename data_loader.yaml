@@ -1,36 +1,37 @@
-name: data-loader
-description: Data loader component for preprocessing and splitting datasets
-version: 1.0.0
+name: Data Loader
+description: Load and split datasets from files or URLs
 inputs:
-  - name: data_path
-    type: String
-    description: Path to input data file
-    optional: true
-  - name: data_url
-    type: String 
-    description: URL to input data file
-    optional: true
-  - name: val_size
-    type: Float
-    description: Validation set size ratio
-    default: 0.2
-  - name: output_format
-    type: String
-    description: Output format (csv/json/parquet)
-    default: csv
-
+- name: data_path
+  label: Input Data Path
+  type: file
+  optional: true
+- name: data_url
+  label: Input Data URL  
+  type: string
+  optional: true
+- name: val_size
+  label: Validation Split Size
+  type: number
+  default: 0.2
+- name: output_format
+  label: Output Format
+  type: string
+  default: csv
+  enum: [csv, json, parquet]
 outputs:
-  - name: train_data
-    type: Dataset
-    description: Training dataset
-  - name: val_data  
-    type: Dataset
-    description: Validation dataset
-  - name: metadata
-    type: JSON
-    description: Processing metadata
-
+- name: train_data
+  label: Training Data
+  type: file
+- name: val_data
+  label: Validation Data  
+  type: file
+- name: metadata
+  label: Metadata
+  type: file
 implementation:
   container:
-    image: ravidocker189/data_loader:latest
-    command: [python, dl_f.py]
+    image: data-loader:1.0.0
+    command: python dl_f.py
+    args: ['--_output_paths', '{train_data}', '{val_data}', '{metadata}',
+           '?data_path={data_path}', '?data_url={data_url}',
+           '--val-size={val_size}', '--output-format={output_format}']
