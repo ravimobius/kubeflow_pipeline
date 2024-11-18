@@ -1,27 +1,31 @@
-
 name: Data Processing Component
-description: A component for loading, processing, and splitting datasets from local files or URLs.
+description: Process and split datasets using DataLoader
 
 inputs:
-  - {name: data_source, type: String, description: 'Path to the input data file or URL'}
-  - {name: val_size, type: Float, default: 0.2, description: 'Proportion of data to use as validation set'}
-  - {name: output_format, type: String, default: 'csv', description: 'Format of output data: csv, json, or parquet'}
-  - {name: is_url, type: Boolean, default: false, description: 'Whether the input data source is a URL'}
+  - {name: data-path, type: String, default: '',optional: true, description: 'Path to the input file (local).'}
+  - {name: data-url, type: String, default: '', optional: true, description: 'URL to the input file (remote).'}
+  - {name: val-size, type: Float, default: 0.2, description: 'Proportion of data to use as validation set.'}
+  - {name: output-format, type: String, default: 'csv', description: 'Format for the output files (csv/json/parquet).'}
+  - {name: Train Output Path, type: String, description: 'Path to save the processed training dataset.'}
+  - {name: Validation Output Path, type: String, description: 'Path to save the processed validation dataset.'}
+  - {name: Metadata Output Path, type: String, description: 'Path to save the metadata JSON file.'}
 
 outputs:
-  - {name: train_output, type: String, description: 'Path to save the training dataset'}
-  - {name: validation_output, type: String, description: 'Path to save the validation dataset'}
-  - {name: metadata_output, type: String, description: 'Path to save the metadata file'}
+  - {name: Train Dataset, type: String, description: 'Path to the processed training dataset.'}
+  - {name: Validation Dataset, type: String, description: 'Path to the processed validation dataset.'}
+  - {name: Metadata, type: String, description: 'Path to the generated metadata file.'}
 
 implementation:
   container:
     image: ravidocker189/data_loader:latest
-    command: [python]
+    command: [python,./src/dl_f.py]
     args: [
-      './src/data_processing.py',
-      --data-url, {inputValue: data_source},
-      --val-size, {inputValue: val_size},
-      --output-format, {inputValue: output_format},
-      --_output_paths, {outputPath: train_output}, {outputPath: validation_output}, {outputPath: metadata_output},
-      --is-url, {inputValue: is_url}
+      --data-path, {inputValue: data-path},
+      --data-url, {inputValue: data-url},
+      --val-size, {inputValue: val-size},
+      --output-format, {inputValue: output-format},
+      --_output_paths,
+      {outputPath: Train Dataset},
+      {outputPath: Validation Dataset},
+      {outputPath: Metadata}
     ]
