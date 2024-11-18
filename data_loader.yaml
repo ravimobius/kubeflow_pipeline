@@ -1,51 +1,47 @@
 name: DataLoader
-description: Component for loading and splitting data from files or URLs
-
+description: Load and split data from files or URLs
+version: 1.0.0
+type: execution_node
 inputs:
-  - name: data_path
+  - label: Data Path
+    name: data_path
     type: string
+    required: false
     description: Path to input data file
-    optional: true
-  - name: data_url
+  - label: Data URL  
+    name: data_url
     type: string
+    required: false
     description: URL to input data file
-    optional: true
-  - name: val_size
-    type: float
-    description: Validation set size
+  - label: Validation Size
+    name: val_size
+    type: number
     default: 0.2
-  - name: output_format
+    description: Validation set size (between 0 and 1)
+  - label: Output Format
+    name: output_format
     type: string
-    description: Output format for data
-    default: csv
     enum: [csv, json, parquet]
-
+    default: csv
+    description: Format for output files
 outputs:
-  - name: train_data
-    type: dataset
-    description: Training dataset
-  - name: val_data
-    type: dataset
-    description: Validation dataset
-  - name: metadata
-    type: object
-    description: Processing metadata
-
-implementation:
-  container:
-    image: ravidocker189/data_loader_1:latest
-    command: ["python", "dataloader.py"]
-    args: [
-      "--data-path", "{inputs.data_path}",
-      "--data-url", "{inputs.data_url}",
-      "--val-size", "{inputs.val_size}",
-      "--output-format", "{inputs.output_format}",
-      "--_output_paths", "{outputs.train_data}", "{outputs.val_data}", "{outputs.metadata}"
-    ]
-
-requirements:
+  - label: Training Data
+    name: train_data
+    type: string
+    description: Path to training dataset
+  - label: Validation Data  
+    name: val_data
+    type: string
+    description: Path to validation dataset
+  - label: Metadata
+    name: metadata
+    type: string
+    description: Path to metadata JSON file
+command: python dataloader.py
+dependencies:
   - pandas
-  - numpy
+  - numpy 
   - scikit-learn
   - requests
   - pyarrow
+image: ravidocker189/data_loader_1:latest
