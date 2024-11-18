@@ -14,7 +14,7 @@ outputs:
 
 implementation:
   container:
-    image: ravimobius189/data_loader_test:1.0
+    image: nikhilv215/dbscantest1:latest
     command: [python]
     args: [
       '/src/dl_f.py',
