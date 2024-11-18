@@ -1,21 +1,76 @@
-name: DBSCAN Clustering Component
-description: Perform DBSCAN clustering with automatic parameter tuning and cluster analysis
+schema_name: component
+name: data-loader
+version: 1.0.0
+type: execution_node
+description: Data loader component for preprocessing and splitting datasets into training and validation sets
 
 inputs:
-  - {name: input_data,     type: String,  default: '',              description: 'Path to input data file (.csv or .parquet)'}
-  - {name: output_dir,     type: String,  default: './model_output',optional: true, description: 'Directory to save the model and analysis results'}
+  - name: data_path
+    title: Input Data Path
+    description: Local file path to input dataset
+    type: string
+    optional: true
+  - name: data_url
+    title: Input Data URL
+    description: URL to input dataset
+    type: string
+    optional: true
+  - name: val_size
+    title: Validation Size
+    description: Size of validation split (0.0 to 1.0)
+    type: number
+    default: 0.2
+  - name: output_format
+    title: Output Format
+    description: Format for output datasets (csv/json/parquet)
+    type: string
+    default: "csv"
+    enum: ["csv", "json", "parquet"]
 
 outputs:
-  - {name: cluster_analysis,  type: String}
-  - {name: model_path,        type: String}
-  - {name: best_parameters,   type: String}
+  - name: train_data
+    title: Training Data
+    description: Training dataset output
+    type: dataset
+    path: train_data
+  - name: val_data
+    title: Validation Data
+    description: Validation dataset output
+    type: dataset
+    path: val_data
+  - name: metadata
+    title: Processing Metadata
+    description: Metadata about the processing run
+    type: json
+    path: metadata.json
 
 implementation:
   container:
-    image: nikhilv215/dbscantest1:latest
-    command: [python]
-    args: [
-      './src/dbscan_trainer.py',
-      --input-data,  {inputValue: input_data},
-      --output-dir,  {inputValue: output_dir}
+    image: data-loader:1.0.0
+    command: [
+      "python3",
+      "dl_f.py",
+      "--data-path", { value: data_path },
+      "--data-url", { value: data_url },
+      "--val-size", { value: val_size },
+      "--output-format", { value: output_format },
+      "--_output_paths",
+      { value: train_data },
+      { value: val_data },
+      { value: metadata }
     ]
+
+categories:
+  - Data Processing
+  - Machine Learning
+
+tags:
+  - data-loader
+  - preprocessing
+  - train-test-split
+
+metadata:
+  display_name: Data Loader
+  author: Your Name
+  license: Apache 2.0
+  platform: Elyra
