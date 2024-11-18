@@ -14,7 +14,7 @@ outputs:
 
 implementation:
   container:
-    image: ravidocker189/data_loader: latest
+    image: ravidocker189/data_loader:latest
     command: [python]
     args: [
       './src/dl_f.py',
