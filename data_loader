@@ -1,10 +1,11 @@
 name: Data Processing Component
 description: Process and split datasets using DataLoader
+
 inputs:
-  - {name: Data Path, type: String, default: '',optional: true, description: 'Path to the input file (local).'}
-  - {name: Data URL, type: String, default: '', optional: true, description: 'URL to the input file (remote).'}
-  - {name: Validation Size, type: Float, default: 0.2, description: 'Proportion of data to use as validation set.'}
-  - {name: Output Format, type: String, default: 'csv', description: 'Format for the output files (csv/json/parquet).'}
+  - {name: data-path, type: String, default: '',optional: true, description: 'Path to the input file (local).'}
+  - {name: data-url, type: String, default: '', optional: true, description: 'URL to the input file (remote).'}
+  - {name: val-size, type: Float, default: 0.2, description: 'Proportion of data to use as validation set.'}
+  - {name: output-format, type: String, default: 'csv', description: 'Format for the output files (csv/json/parquet).'}
   - {name: Train Output Path, type: String, description: 'Path to save the processed training dataset.'}
   - {name: Validation Output Path, type: String, description: 'Path to save the processed validation dataset.'}
   - {name: Metadata Output Path, type: String, description: 'Path to save the metadata JSON file.'}
@@ -19,10 +20,10 @@ implementation:
     image: ravidocker189/data_loader:latest
     command: [python, -u, src/dl_f.py]
     args: [
-      --data-path, {inputValue: Data Path},
-      --data-url, {inputValue: Data URL},
-      --val-size, {inputValue: Validation Size},
-      --output-format, {inputValue: Output Format},
+      --data-path, {inputValue: data-path},
+      --data-url, {inputValue: data-url},
+      --val-size, {inputValue: val-size},
+      --output-format, {inputValue: output-format},
       --_output_paths,
       {outputPath: Train Dataset},
       {outputPath: Validation Dataset},
